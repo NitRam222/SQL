@@ -1,0 +1,40 @@
+CREATE DATABASE social_media;
+USE social_media;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    username VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    text_content TEXT NOT NULL,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+INSERT INTO users VALUES (1, "alice@mail.com", "alice");
+
+INSERT INTO users (email, username) 
+VALUES ("bob@mail.com", "bob");
+
+INSERT INTO users (email, username)
+VALUES 
+    ("charles@mail.com", "chuck"),
+    ("dan@mail.com", "DanTDM"),
+    ("greta@mail.com", "Greta Thunberg");
+
+INSERT INTO posts (text_content, user_id)
+VALUES 
+    ("What happened to YouTubers man..", 4),
+    ("yes, please do enlighten me. email me at smalldickenergy@getalife.com", 5);
+
+UPDATE users 
+SET email = "angela@mail.com", username = "angela" 
+WHERE username = "alice";
+
+DELETE FROM users WHERE username = "bob";
+
+SELECT * FROM users;
+SELECT * FROM posts;
