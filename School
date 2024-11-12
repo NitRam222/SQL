@@ -1,0 +1,90 @@
+CREATE DATABASE school;
+USE school;
+
+-- Tabelle für Lehrer
+CREATE TABLE teachers (
+    teacher_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    subject VARCHAR(100)
+);
+
+-- Tabelle für Schüler
+CREATE TABLE students (
+    student_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    class_id INT
+);
+
+-- Tabelle für Klassen
+CREATE TABLE classes (
+    class_id INT PRIMARY KEY AUTO_INCREMENT,
+    class_name VARCHAR(50),
+    homeroom_teacher_id INT,
+    FOREIGN KEY (homeroom_teacher_id) REFERENCES teachers(teacher_id)
+);
+
+-- Tabelle für Fächer
+CREATE TABLE subjects (
+    subject_id INT PRIMARY KEY AUTO_INCREMENT,
+    subject_name VARCHAR(100)
+);
+
+-- Tabelle für das Zuordnen von Lehrern zu Fächern und Klassen
+CREATE TABLE teacher_subject_class (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    teacher_id INT,
+    subject_id INT,
+    class_id INT,
+    FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id),
+    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
+    FOREIGN KEY (class_id) REFERENCES classes(class_id)
+);
+
+-- Tabelle für das Zuordnen von Schülern zu Fächern
+CREATE TABLE student_subject (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT,
+    subject_id INT,
+    FOREIGN KEY (student_id) REFERENCES students(student_id),
+    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
+);
+
+-- Beispielhafte Daten für Lehrer
+INSERT INTO teachers (first_name, last_name, email, subject) VALUES 
+('Anna', 'Müller', 'anna.mueller@example.com', 'Mathematik'),
+('Peter', 'Schmidt', 'peter.schmidt@example.com', 'Biologie'),
+('Lisa', 'Weber', 'lisa.weber@example.com', 'Chemie');
+
+-- Beispielhafte Daten für Klassen
+INSERT INTO classes (class_name, homeroom_teacher_id) VALUES 
+('Klasse 10A', 1),
+('Klasse 10B', 2);
+
+-- Beispielhafte Daten für Schüler
+INSERT INTO students (first_name, last_name, email, class_id) VALUES 
+('Max', 'Mustermann', 'max.mustermann@example.com', 1),
+('Laura', 'Schneider', 'laura.schneider@example.com', 1),
+('Tim', 'Becker', 'tim.becker@example.com', 2);
+
+-- Beispielhafte Daten für Fächer
+INSERT INTO subjects (subject_name) VALUES 
+('Mathematik'),
+('Biologie'),
+('Chemie');
+
+-- Zuordnung von Lehrern zu Fächern und Klassen
+INSERT INTO teacher_subject_class (teacher_id, subject_id, class_id) VALUES 
+(1, 1, 1),
+(2, 2, 1),
+(3, 3, 2);
+
+-- Zuordnung von Schülern zu Fächern
+INSERT INTO student_subject (student_id, subject_id) VALUES 
+(1, 1),
+(1, 2),
+(2, 1),
+(3, 3);
