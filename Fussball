@@ -1,0 +1,137 @@
+CREATE DATABASE Fussball;
+USE Fussball;
+
+CREATE TABLE Mitglieder (
+    MitgliedID INT PRIMARY KEY AUTO_INCREMENT,
+    Vorname VARCHAR(50) NOT NULL,
+    Nachname VARCHAR(50) NOT NULL,
+    Geburtsdatum DATE,
+    Mitgliedsart ENUM('Spieler', 'Trainer', 'Betreuer', 'Verwaltung') NOT NULL,
+    Eintrittsdatum DATE
+);
+
+CREATE TABLE Spieler (
+    SpielerID INT PRIMARY KEY AUTO_INCREMENT,
+    MitgliedID INT,
+    PositionID INT,
+    TeamID INT,
+    Trikotnummer INT,
+    FOREIGN KEY (MitgliedID) REFERENCES Mitglieder(MitgliedID),
+    FOREIGN KEY (PositionID) REFERENCES Positionen(PositionID),
+    FOREIGN KEY (TeamID) REFERENCES Teams(TeamID)
+);
+
+CREATE TABLE Trainer (
+    TrainerID INT PRIMARY KEY AUTO_INCREMENT,
+    MitgliedID INT,
+    TeamID INT,
+    Lizenzstufe VARCHAR(30),
+    FOREIGN KEY (MitgliedID) REFERENCES Mitglieder(MitgliedID),
+    FOREIGN KEY (TeamID) REFERENCES Teams(TeamID)
+);
+
+CREATE TABLE Teams (
+    TeamID INT PRIMARY KEY AUTO_INCREMENT,
+    Teamname VARCHAR(50) NOT NULL,
+    LigaID INT,
+    Gruendungsjahr YEAR,
+    FOREIGN KEY (LigaID) REFERENCES Ligen(LigaID)
+);
+
+CREATE TABLE Ligen (
+    LigaID INT PRIMARY KEY AUTO_INCREMENT,
+    Liganame VARCHAR(50) NOT NULL,
+    Land VARCHAR(50),
+    Niveaustufe ENUM('Amateur', 'Halbprofi', 'Profi')
+);
+
+CREATE TABLE Positionen (
+    PositionID INT PRIMARY KEY AUTO_INCREMENT,
+    Positionsname VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE Spiele (
+    SpielID INT PRIMARY KEY AUTO_INCREMENT,
+    Team1ID INT,
+    Team2ID INT,
+    Datum DATE,
+    Ort VARCHAR(100),
+    LigaID INT,
+    FOREIGN KEY (Team1ID) REFERENCES Teams(TeamID),
+    FOREIGN KEY (Team2ID) REFERENCES Teams(TeamID),
+    FOREIGN KEY (LigaID) REFERENCES Ligen(LigaID)
+);
+
+CREATE TABLE Spielstatistik (
+    StatistikID INT PRIMARY KEY AUTO_INCREMENT,
+    SpielID INT,
+    SpielerID INT,
+    Ereignis ENUM('Tor', 'Vorlage', 'Gelbe Karte', 'Rote Karte', 'Auswechslung') NOT NULL,
+    Minute INT NOT NULL,
+    FOREIGN KEY (SpielID) REFERENCES Spiele(SpielID),
+    FOREIGN KEY (SpielerID) REFERENCES Spieler(SpielerID)
+);
+
+CREATE TABLE Trainingseinheiten (
+    TrainingID INT PRIMARY KEY AUTO_INCREMENT,
+    TeamID INT,
+    TrainerID INT,
+    Datum DATE,
+    Dauer INT,
+    Beschreibung TEXT,
+    FOREIGN KEY (TeamID) REFERENCES Teams(TeamID),
+    FOREIGN KEY (TrainerID) REFERENCES Trainer(TrainerID)
+);
+
+CREATE TABLE Trainingsanwesenheit (
+    AnwesenheitID INT PRIMARY KEY AUTO_INCREMENT,
+    TrainingID INT,
+    SpielerID INT,
+    Anwesenheit ENUM('Anwesend', 'Abwesend', 'Entschuldigt') DEFAULT 'Anwesend',
+    Bemerkungen TEXT,
+    FOREIGN KEY (TrainingID) REFERENCES Trainingseinheiten(TrainingID),
+    FOREIGN KEY (SpielerID) REFERENCES Spieler(SpielerID)
+);
+
+INSERT INTO Ligen (Liganame, Land, Niveaustufe) VALUES 
+    ('Oberliga', 'Deutschland', 'Amateur'),
+    ('Regionalliga', 'Deutschland', 'Halbprofi');
+
+INSERT INTO Teams (Teamname, LigaID, Gruendungsjahr) VALUES 
+    ('FC Musterstadt', 1, 1990),
+    ('SV Beispielhausen', 2, 1985);
+
+INSERT INTO Positionen (Positionsname) VALUES 
+    ('Torwart'), 
+    ('Verteidiger'), 
+    ('Mittelfeldspieler'), 
+    ('Stürmer');
+
+INSERT INTO Mitglieder (Vorname, Nachname, Geburtsdatum, Mitgliedsart, Eintrittsdatum) VALUES 
+    ('Max', 'Mustermann', '2001-06-15', 'Spieler', '2015-08-01'),
+    ('John', 'Doe', '1998-03-22', 'Spieler', '2016-09-01'),
+    ('Karl', 'Trainer', '1970-04-20', 'Trainer', '2010-03-15');
+
+INSERT INTO Spieler (MitgliedID, PositionID, TeamID, Trikotnummer) VALUES 
+    (1, 1, 1, 1),
+    (2, 3, 2, 9);
+
+INSERT INTO Trainer (MitgliedID, TeamID, Lizenzstufe) VALUES 
+    (3, 1, 'A-Lizenz');
+
+INSERT INTO Spiele (Team1ID, Team2ID, Datum, Ort, LigaID) VALUES 
+    (1, 2, '2023-05-10', 'Stadion Musterstadt', 1),
+    (2, 1, '2023-06-20', 'Sportplatz Beispielhausen', 1);
+
+INSERT INTO Spielstatistik (SpielID, SpielerID, Ereignis, Minute) VALUES 
+    (1, 1, 'Tor', 15), 
+    (1, 2, 'Vorlage', 15), 
+    (1, 1, 'Gelbe Karte', 45);
+
+INSERT INTO Trainingseinheiten (TeamID, TrainerID, Datum, Dauer, Beschreibung) VALUES 
+    (1, 1, '2023-04-20', 90, 'Taktik und Ausdauertraining'),
+    (2, 1, '2023-05-22', 120, 'Technikübungen und Spielpraxis');
+
+INSERT INTO Trainingsanwesenheit (TrainingID, SpielerID, Anwesenheit, Bemerkungen) VALUES 
+    (1, 1, 'Anwesend', NULL),
+    (1, 2, 'Abwesend', 'Krankheit');
