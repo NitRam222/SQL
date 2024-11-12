@@ -1,0 +1,136 @@
+CREATE DATABASE fussballverein2;
+
+USE fussballverein2;
+
+CREATE TABLE trainer (
+    trainer_id INT AUTO_INCREMENT PRIMARY KEY,
+    vorname VARCHAR(50) NOT NULL,
+    nachname VARCHAR(50) NOT NULL,
+    geburtsdatum DATE,
+    lizenznummer VARCHAR(20) UNIQUE
+);
+
+CREATE TABLE team (
+    team_id INT AUTO_INCREMENT PRIMARY KEY,
+    teamname VARCHAR(50) NOT NULL,
+    trainer_id INT,
+    FOREIGN KEY (trainer_id) REFERENCES trainer(trainer_id)
+);
+
+CREATE TABLE spieler (
+    spieler_id INT AUTO_INCREMENT PRIMARY KEY,
+    vorname VARCHAR(50) NOT NULL,
+    nachname VARCHAR(50) NOT NULL,
+    geburtsdatum DATE,
+    position VARCHAR(20),
+    trikotnummer INT,
+    team_id INT,
+    FOREIGN KEY (team_id) REFERENCES team(team_id)
+);
+
+CREATE TABLE spiele (
+    spiel_id INT AUTO_INCREMENT PRIMARY KEY,
+    heimteam_id INT,
+    auswärtsteam_id INT,
+    spiel_datum DATE,
+    heimteam_tore INT DEFAULT 0,
+    auswärtsteam_tore INT DEFAULT 0,
+    FOREIGN KEY (heimteam_id) REFERENCES team(team_id),
+    FOREIGN KEY (auswärtsteam_id) REFERENCES team(team_id)
+);
+
+CREATE TABLE stadion (
+    stadion_id INT AUTO_INCREMENT PRIMARY KEY,
+    stadionname VARCHAR(50) NOT NULL,
+    kapazität INT,
+    adresse VARCHAR(100)
+);
+
+CREATE TABLE schiedsrichter (
+    schiedsrichter_id INT AUTO_INCREMENT PRIMARY KEY,
+    vorname VARCHAR(50) NOT NULL,
+    nachname VARCHAR(50) NOT NULL,
+    lizenznummer VARCHAR(20) UNIQUE
+);
+
+CREATE TABLE spiel_ereignisse (
+    ereignis_id INT AUTO_INCREMENT PRIMARY KEY,
+    spiel_id INT,
+    spieler_id INT,
+    ereignis_typ VARCHAR(20), -- z.B. 'Tor', 'Gelbe Karte', 'Rote Karte'
+    zeitpunkt INT, -- Spielminute
+    FOREIGN KEY (spiel_id) REFERENCES spiele(spiel_id),
+    FOREIGN KEY (spieler_id) REFERENCES spieler(spieler_id)
+);
+
+CREATE TABLE spiel_statistiken (
+    statistik_id INT AUTO_INCREMENT PRIMARY KEY,
+    spiel_id INT,
+    ballbesitz_heimteam INT,
+    ballbesitz_auswärtsteam INT,
+    eckbälle_heimteam INT,
+    eckbälle_auswärtsteam INT,
+    fouls_heimteam INT,
+    fouls_auswärtsteam INT,
+    FOREIGN KEY (spiel_id) REFERENCES spiele(spiel_id)
+);
+
+CREATE TABLE ticketverkauf (
+    ticket_id INT AUTO_INCREMENT PRIMARY KEY,
+    spiel_id INT,
+    stadion_id INT,
+    anzahl_verkaufte_tickets INT,
+    einnahmen DECIMAL(10,2),
+    FOREIGN KEY (spiel_id) REFERENCES spiele(spiel_id),
+    FOREIGN KEY (stadion_id) REFERENCES stadion(stadion_id)
+);
+
+CREATE TABLE sponsoren (
+    sponsor_id INT AUTO_INCREMENT PRIMARY KEY,
+    sponsorname VARCHAR(50),
+    vertrag_wert DECIMAL(10,2),
+    team_id INT,
+    FOREIGN KEY (team_id) REFERENCES team(team_id)
+);
+
+CREATE TABLE fans (
+    fan_id INT AUTO_INCREMENT PRIMARY KEY,
+    vorname VARCHAR(50) NOT NULL,
+    nachname VARCHAR(50) NOT NULL,
+    lieblings_team_id INT,
+    FOREIGN KEY (lieblings_team_id) REFERENCES team(team_id)
+);
+
+-- Beispiel-Dateneinfügen
+INSERT INTO trainer (vorname, nachname, geburtsdatum, lizenznummer)
+VALUES ('Hans', 'Müller', '1975-03-12', 'T12345');
+
+INSERT INTO team (teamname, trainer_id)
+VALUES ('FC Beispiel', 1);
+
+INSERT INTO spieler (vorname, nachname, geburtsdatum, position, trikotnummer, team_id)
+VALUES ('Max', 'Mustermann', '1995-05-20', 'Stürmer', 9, 1);
+
+INSERT INTO stadion (stadionname, kapazität, adresse)
+VALUES ('Beispiel Stadion', 50000, 'Hauptstraße 1, Musterstadt');
+
+INSERT INTO schiedsrichter (vorname, nachname, lizenznummer)
+VALUES ('Peter', 'Schmidt', 'S12345');
+
+INSERT INTO spiele (heimteam_id, auswärtsteam_id, spiel_datum, heimteam_tore, auswärtsteam_tore)
+VALUES (1, 1, '2023-11-10', 3, 2);
+
+INSERT INTO spiel_ereignisse (spiel_id, spieler_id, ereignis_typ, zeitpunkt)
+VALUES (1, 1, 'Tor', 23);
+
+INSERT INTO spiel_statistiken (spiel_id, ballbesitz_heimteam, ballbesitz_auswärtsteam, eckbälle_heimteam, eckbälle_auswärtsteam, fouls_heimteam, fouls_auswärtsteam)
+VALUES (1, 55, 45, 6, 3, 12, 8);
+
+INSERT INTO ticketverkauf (spiel_id, stadion_id, anzahl_verkaufte_tickets, einnahmen)
+VALUES (1, 1, 40000, 200000);
+
+INSERT INTO sponsoren (sponsorname, vertrag_wert, team_id)
+VALUES ('BeispielSponsor GmbH', 500000, 1);
+
+INSERT INTO fans (vorname, nachname, lieblings_team_id)
+VALUES ('Anna', 'Mustermann', 1);
