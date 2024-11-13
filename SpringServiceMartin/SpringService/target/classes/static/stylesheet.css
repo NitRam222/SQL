@@ -1,0 +1,67 @@
+h1 {
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.add-note {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: calc(100% - 2rem);
+}
+
+.add-note #new-note {
+    flex-grow: 1;
+}
+
+/* Displaying note */
+.note {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 20rem;
+    border: 1px solid black;
+    border-radius: 1rem;
+    padding: 1.6rem 2rem;
+    position: relative;
+}
+
+.note .delete {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.note .buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: .8em;
+}
+
+.note .cancel,
+.note .save,
+.note .edit-text {
+    display: none;
+}
+
+/* Editing note */
+
+.note.edit .edit,
+.note.edit .text {
+    display: none;
+}
+
+.note.edit .save,
+.note.edit .cancel,
+.note.edit .edit-text {
+    display: block;
+}

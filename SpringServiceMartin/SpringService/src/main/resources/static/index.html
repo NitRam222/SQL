@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Notes</title>
+    <link rel="stylesheet" href="./stylesheet.css">
+</head>
+
+<body>
+    <h1>Notes</h1>
+    <div class="container"></div>
+    <div class="add-note">
+        <input id="new-note" type="text"></input>
+        <button id="submit-note">add note</button>
+    </div>
+    <template id="note">
+        <div class="note">
+            <button class="delete">x</button>
+            <div class="content">
+                <p class="text"></p>
+                <textarea class="edit-text"></textarea>
+            </div>
+            <div class="buttons">
+                <button class="edit">edit</button>
+                <button class="cancel">cancel</button>
+                <button class="save">save</button>
+            </div>
+        </div>
+    </template>
+
+    <script src="./js/RestService.js"></script>
+    <script src="./js/NoteService.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+
+</html>
